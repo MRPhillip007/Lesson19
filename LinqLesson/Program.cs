@@ -15,6 +15,16 @@ namespace LinqLesson
             // find 2 persons whos ‘about’ have the most same words
             char[] delimiterChars = { ' ', ',', '.', ':', '!', '?' };
 
+            FindSameAbout(persons, delimiterChars);
+
+            // find out who is located farthest north/south/west/east using latitude/longitude data
+            LocatedFarthest(persons);
+
+
+        }
+
+        static void FindSameAbout(List<Person> persons, char[] delimiterChars)
+        {
             var personsWordsPairsResult = new Dictionary<List<string>, int>();
 
             var personWordsPairs = persons.Select(x => new { personId = x.Id, words = x.About.Split(delimiterChars) }).ToList();
@@ -31,23 +41,21 @@ namespace LinqLesson
             }
 
             var result = persons.Where(p => personsWordsPairsResult.OrderByDescending(x => x.Value).FirstOrDefault().Key.Contains(p.Id)).ToList();
+
             foreach (var item in result)
             {
                 Console.WriteLine(item.Name);
             }
+        }
 
-            // find out who is located farthest north/south/west/east using latitude/longitude data
+        static void LocatedFarthest(List<Person> persons)
+        {
             var farthestNorth = persons.Where(p => p.Latitude == persons.Max(p => p.Latitude)).FirstOrDefault();
             var farthestSouth = persons.Where(p => p.Latitude == persons.Min(p => p.Latitude)).FirstOrDefault();
             var farthestWest = persons.Where(p => p.Longitude == persons.Max(p => p.Longitude)).FirstOrDefault();
             var farthestEast = persons.Where(p => p.Longitude == persons.Min(p => p.Longitude)).FirstOrDefault();
-        }
-    }
-    public static class StrintExtension
-    {
-        public static int WordsCount(this string source)
-        {
-            return source.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+            Console.WriteLine($"North - {farthestNorth}\n South - {farthestSouth}\n West {farthestWest}\n East{farthestEast}");
         }
     }
 
